@@ -12,6 +12,7 @@ GmailアプリのUIクローン
 - BottomNavigationBar
 - SearchAnchor
 - ListView | ListTile
+- FloatingActionButton
 
 ## License
 

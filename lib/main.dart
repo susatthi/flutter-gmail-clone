@@ -39,6 +39,33 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(child: currentItem.body),
       bottomNavigationBar: const BottomNavigationBar(),
+      floatingActionButton: const ComposeEmailButton(),
+    );
+  }
+}
+
+class ComposeEmailButton extends StatelessWidget {
+  const ComposeEmailButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: () {},
+      icon: Icon(
+        Icons.edit_outlined,
+        color: context.error,
+      ),
+      label: Text(
+        '作成',
+        style: context.labelLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: context.error,
+        ),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50),
+      ),
+      backgroundColor: context.surfaceContainerLowest,
     );
   }
 }
