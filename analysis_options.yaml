@@ -8,6 +8,9 @@ linter:
     # パッケージ内のimportは相対パスで書く
     prefer_relative_imports: true
 
+    # setter不要
+    use_setters_to_change_properties: false
+
 analyzer:
   exclude:
     - '**/*.g.dart'
