@@ -2,6 +2,16 @@
 
 GmailアプリのUIクローン
 
+# Tips
+
+- fvm
+- vscode設定
+- Makefile
+- Riverpod
+- lint（pedantic_mono）
+- BottomNavigationBar
+- SearchAnchor
+
 ## License
 
 MIT

@@ -85,7 +85,7 @@ class BottomNavigationBar extends ConsumerWidget {
     return BottomAppBar(
       padding: EdgeInsets.zero,
       height: 56,
-      color: context.onPrimary,
+      color: context.surfaceContainerLowest,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -114,7 +114,54 @@ class MailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text('mail');
+    return const Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: SearchMailAnchor(),
+        ),
+      ],
+    );
+  }
+}
+
+class SearchMailAnchor extends StatelessWidget {
+  const SearchMailAnchor({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SearchAnchor(
+      builder: (context, controller) {
+        return SizedBox(
+          height: 48,
+          child: SearchBar(
+            controller: controller,
+            hintText: 'メールを検索',
+            leading: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.menu),
+            ),
+            trailing: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.person),
+              ),
+            ],
+            elevation: WidgetStateProperty.all(2),
+            backgroundColor:
+                WidgetStateProperty.all(context.surfaceContainerLowest),
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        );
+      },
+      suggestionsBuilder: (context, controller) {
+        return [];
+      },
+    );
   }
 }
 
