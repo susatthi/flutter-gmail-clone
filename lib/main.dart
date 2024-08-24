@@ -192,11 +192,8 @@ class SearchMailAnchor extends StatelessWidget {
               onPressed: () {},
               icon: const Icon(Icons.menu),
             ),
-            trailing: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.person),
-              ),
+            trailing: const [
+              PersonIconButton(),
             ],
             elevation: WidgetStateProperty.all(2),
             backgroundColor:
@@ -212,6 +209,31 @@ class SearchMailAnchor extends StatelessWidget {
       suggestionsBuilder: (context, controller) {
         return [];
       },
+    );
+  }
+}
+
+class PersonIconButton extends StatelessWidget {
+  const PersonIconButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {},
+      child: CircleAvatar(
+        radius: 18,
+        backgroundColor: context.primary,
+        child: CircleAvatar(
+          radius: 16,
+          backgroundColor: context.onPrimary,
+          child: const CircleAvatar(
+            radius: 14,
+            foregroundImage: NetworkImage(
+              'https://pbs.twimg.com/profile_images/3229257541/0f3a5a42716a230e07619abc86d67b8d_400x400.png',
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
