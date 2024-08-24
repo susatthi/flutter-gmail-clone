@@ -10,9 +10,10 @@ GmailアプリのUIクローン
 - Riverpod
 - lint（pedantic_mono）
 - BottomNavigationBar
-- SearchAnchor
-- ListView | ListTile
+- SearchAnchorとSearchBar
+- ListViewとListTile
 - FloatingActionButton
+- AppBarとBottomAppBarのスクロール連動
 
 ## License
 

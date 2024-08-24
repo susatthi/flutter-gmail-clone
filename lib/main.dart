@@ -97,7 +97,7 @@ class _EmailListPageState extends ConsumerState<EmailListPage> {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
               SliverAppBar(
-                title: const SearchMailAnchor(),
+                title: const SearchEmailAnchor(),
                 backgroundColor: context.surfaceContainerLowest,
                 forceMaterialTransparency: true,
                 snap: true,
@@ -161,12 +161,34 @@ class ComposeEmailButton extends StatelessWidget {
   }
 }
 
-class SearchMailAnchor extends StatelessWidget {
-  const SearchMailAnchor({super.key});
+class SearchEmailAnchor extends StatefulWidget {
+  const SearchEmailAnchor({super.key});
+
+  @override
+  State<SearchEmailAnchor> createState() => _SearchEmailAnchorState();
+}
+
+class _SearchEmailAnchorState extends State<SearchEmailAnchor> {
+  final _searchController = SearchController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // 展開前のSearchBarのカーソル点滅を止める
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_searchController.isOpen) {
+        FocusScope.of(context).requestFocus(FocusNode());
+      }
+    });
     return SearchAnchor(
+      searchController: _searchController,
+      viewBackgroundColor: context.surfaceContainerLowest,
+      viewHintText: 'メールを検索',
       builder: (context, controller) {
         return SizedBox(
           height: 48,
@@ -188,6 +210,8 @@ class SearchMailAnchor extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
+            onTap: () => controller.openView(),
+            onChanged: (_) => controller.openView(),
           ),
         );
       },
