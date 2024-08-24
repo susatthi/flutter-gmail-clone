@@ -1,6 +1,9 @@
 # flutter_gmail_clone
 
-GmailアプリのUIクローン
+GmailアプリのUIクローンアプリ
+
+https://github.com/user-attachments/assets/2947d34e-62c2-4387-b744-ac9490963e03
+
 
 # Tips
 
