@@ -82,31 +82,41 @@ class BottomNavigationBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentItem = ref.watch(navigationItemNotifierProvider);
-    return BottomAppBar(
-      padding: EdgeInsets.zero,
-      height: 56,
-      color: context.surfaceContainerLowest,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ...NavigationItem.values.map(
-            (item) {
-              final isSelected = item == currentItem;
-              return Expanded(
-                child: InkWell(
-                  onTap: () => ref
-                      .read(navigationItemNotifierProvider.notifier)
-                      .select(item),
-                  child: Icon(
-                    isSelected ? item.selectedIcon : item.icon,
-                    size: 26,
-                    color: isSelected ? context.error : context.outline,
-                  ),
-                ),
-              );
-            },
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: context.shadow.withOpacity(0.2),
+            blurRadius: 8,
           ),
         ],
+      ),
+      child: BottomAppBar(
+        padding: EdgeInsets.zero,
+        height: 56,
+        color: context.surfaceContainerLowest,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ...NavigationItem.values.map(
+              (item) {
+                final isSelected = item == currentItem;
+                return Expanded(
+                  child: InkWell(
+                    onTap: () => ref
+                        .read(navigationItemNotifierProvider.notifier)
+                        .select(item),
+                    child: Icon(
+                      isSelected ? item.selectedIcon : item.icon,
+                      size: 26,
+                      color: isSelected ? context.error : context.outline,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
