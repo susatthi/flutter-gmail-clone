@@ -91,21 +91,23 @@ class _EmailListPageState extends ConsumerState<EmailListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.surfaceContainerLowest,
-      body: SafeArea(
-        child: NestedScrollView(
-          controller: _scrollController,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                title: const SearchEmailAnchor(),
-                backgroundColor: context.surfaceContainerLowest,
-                forceMaterialTransparency: true,
-                snap: true,
-                floating: true,
-              ),
-            ];
-          },
-          body: ListView.builder(
+      body: NestedScrollView(
+        controller: _scrollController,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              title: const SearchEmailAnchor(),
+              backgroundColor: context.surfaceContainerLowest,
+              forceMaterialTransparency: true,
+              snap: true,
+              floating: true,
+            ),
+          ];
+        },
+        body: MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          child: ListView.builder(
             itemCount: 1 + 200,
             itemBuilder: (context, index) {
               if (index == 0) {
@@ -253,7 +255,7 @@ class InboxTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 24, 8),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
         '受信トレイ',
         style: context.labelMedium?.copyWith(
@@ -389,9 +391,10 @@ class BottomNavigationBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentItem = ref.watch(navigationItemNotifierProvider);
+    final safeAreaBottomPadding = MediaQuery.viewPaddingOf(context).bottom;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      height: show ? 90 : 0,
+      height: show ? kBottomNavigationBarHeight + safeAreaBottomPadding : 0,
       child: DecoratedBox(
         decoration: BoxDecoration(
           boxShadow: [
