@@ -9,11 +9,11 @@ GmailアプリのUIクローン
 - Makefile
 - Riverpod
 - lint（pedantic_mono）
-- BottomNavigationBar
+- BottomAppBar
 - SearchAnchorとSearchBar
 - ListViewとListTile
 - FloatingActionButton
-- AppBarとBottomAppBarのスクロール連動
+- SliverAppBarとBottomAppBarのスクロール連動
 
 ## License
 
