@@ -420,7 +420,6 @@ class BottomNavigationBar extends ConsumerWidget {
                           .select(item),
                       child: Icon(
                         isSelected ? item.selectedIcon : item.icon,
-                        size: 26,
                         color: isSelected ? context.primary : context.outline,
                       ),
                     ),
