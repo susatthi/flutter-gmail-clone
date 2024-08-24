@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -25,27 +26,113 @@ class App extends StatelessWidget {
       theme: ThemeData(
         colorSchemeSeed: Colors.blue,
       ),
-      home: const HomePage(),
+      home: const NavigationPage(),
     );
   }
 }
 
-class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+class NavigationPage extends ConsumerWidget {
+  const NavigationPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentItem = ref.watch(navigationItemNotifierProvider);
+    return IndexedStack(
+      index: NavigationItem.values.indexOf(currentItem),
+      children: NavigationItem.values.map((item) => item.body).toList(),
+    );
+  }
+}
+
+class EmailListPage extends ConsumerStatefulWidget {
+  const EmailListPage({super.key});
+
+  @override
+  ConsumerState<EmailListPage> createState() => _EmailListPageState();
+}
+
+class _EmailListPageState extends ConsumerState<EmailListPage> {
+  final _scrollController = ScrollController();
+  bool _showBottomBar = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // _scrollControllerがattachされてからリスナーを追加する必要がある
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.position.isScrollingNotifier.addListener(() {
+        final newScrollDirection =
+            _scrollController.position.userScrollDirection;
+        if (newScrollDirection == ScrollDirection.idle) {
+          return;
+        }
+
+        final showBottomBar = switch (newScrollDirection) {
+          ScrollDirection.forward => true,
+          ScrollDirection.reverse => false,
+          ScrollDirection.idle => false,
+        };
+        if (_showBottomBar != showBottomBar) {
+          setState(() {
+            _showBottomBar = showBottomBar;
+          });
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: currentItem.body),
-      bottomNavigationBar: const BottomNavigationBar(),
-      floatingActionButton: const ComposeEmailButton(),
+      backgroundColor: context.surfaceContainerLowest,
+      body: SafeArea(
+        child: NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                title: const SearchMailAnchor(),
+                backgroundColor: context.surfaceContainerLowest,
+                forceMaterialTransparency: true,
+                snap: true,
+                floating: true,
+              ),
+            ];
+          },
+          body: ListView.builder(
+            itemCount: 1 + 200,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return const InboxTitle();
+              }
+              return const EmailTile();
+            },
+          ),
+        ),
+      ),
+      floatingActionButton: ComposeEmailButton(
+        isExtended: _showBottomBar,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        show: _showBottomBar,
+      ),
     );
   }
 }
 
 class ComposeEmailButton extends StatelessWidget {
-  const ComposeEmailButton({super.key});
+  const ComposeEmailButton({
+    super.key,
+    required this.isExtended,
+  });
+
+  final bool isExtended;
 
   @override
   Widget build(BuildContext context) {
@@ -55,123 +142,21 @@ class ComposeEmailButton extends StatelessWidget {
         Icons.edit_outlined,
         color: context.error,
       ),
-      label: Text(
-        '作成',
-        style: context.labelLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: context.error,
+      label: SizedBox(
+        width: 64,
+        child: Text(
+          '作成',
+          style: context.labelLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: context.error,
+          ),
         ),
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(50),
       ),
       backgroundColor: context.surfaceContainerLowest,
-    );
-  }
-}
-
-@riverpod
-class NavigationItemNotifier extends _$NavigationItemNotifier {
-  @override
-  NavigationItem build() {
-    return NavigationItem.values.first;
-  }
-
-  void select(NavigationItem item) {
-    state = item;
-  }
-}
-
-enum NavigationItem {
-  mail,
-  video,
-  ;
-
-  IconData get icon => switch (this) {
-        mail => Icons.email_outlined,
-        video => Icons.videocam_outlined,
-      };
-
-  IconData get selectedIcon => switch (this) {
-        mail => Icons.email,
-        video => Icons.videocam,
-      };
-
-  Widget get body => switch (this) {
-        mail => const MailBody(),
-        video => const VideoBody(),
-      };
-}
-
-class BottomNavigationBar extends ConsumerWidget {
-  const BottomNavigationBar({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentItem = ref.watch(navigationItemNotifierProvider);
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: context.shadow.withOpacity(0.2),
-            blurRadius: 8,
-          ),
-        ],
-      ),
-      child: BottomAppBar(
-        padding: EdgeInsets.zero,
-        height: 56,
-        color: context.surfaceContainerLowest,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ...NavigationItem.values.map(
-              (item) {
-                final isSelected = item == currentItem;
-                return Expanded(
-                  child: InkWell(
-                    onTap: () => ref
-                        .read(navigationItemNotifierProvider.notifier)
-                        .select(item),
-                    child: Icon(
-                      isSelected ? item.selectedIcon : item.icon,
-                      size: 26,
-                      color: isSelected ? context.error : context.outline,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class MailBody extends StatelessWidget {
-  const MailBody({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: SearchMailAnchor(),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: 1 + 20,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return const InboxTitle();
-              }
-              return const MailTile();
-            },
-          ),
-        ),
-      ],
+      isExtended: isExtended,
     );
   }
 }
@@ -256,8 +241,8 @@ class InboxTitle extends StatelessWidget {
   }
 }
 
-class MailTile extends StatelessWidget {
-  const MailTile({super.key});
+class EmailTile extends StatelessWidget {
+  const EmailTile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -322,11 +307,103 @@ class MailTile extends StatelessWidget {
   }
 }
 
-class VideoBody extends StatelessWidget {
-  const VideoBody({super.key});
+class MeetListPage extends StatelessWidget {
+  const MeetListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Text('video');
+    return const Scaffold(
+      body: SafeArea(
+        child: Text('meet list'),
+      ),
+      bottomNavigationBar: BottomNavigationBar(),
+    );
+  }
+}
+
+@riverpod
+class NavigationItemNotifier extends _$NavigationItemNotifier {
+  @override
+  NavigationItem build() {
+    return NavigationItem.values.first;
+  }
+
+  void select(NavigationItem item) {
+    state = item;
+  }
+}
+
+enum NavigationItem {
+  emailList,
+  meetList,
+  ;
+
+  IconData get icon => switch (this) {
+        emailList => Icons.email_outlined,
+        meetList => Icons.videocam_outlined,
+      };
+
+  IconData get selectedIcon => switch (this) {
+        emailList => Icons.email,
+        meetList => Icons.videocam,
+      };
+
+  Widget get body => switch (this) {
+        emailList => const EmailListPage(),
+        meetList => const MeetListPage(),
+      };
+}
+
+class BottomNavigationBar extends ConsumerWidget {
+  const BottomNavigationBar({
+    super.key,
+    this.show = true,
+  });
+
+  final bool show;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentItem = ref.watch(navigationItemNotifierProvider);
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      height: show ? 90 : 0,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: context.shadow.withOpacity(0.2),
+              blurRadius: 8,
+            ),
+          ],
+        ),
+        child: BottomAppBar(
+          padding: EdgeInsets.zero,
+          color: context.surfaceContainerLowest,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ...NavigationItem.values.map(
+                (item) {
+                  final isSelected = item == currentItem;
+                  return Expanded(
+                    child: InkWell(
+                      onTap: () => ref
+                          .read(navigationItemNotifierProvider.notifier)
+                          .select(item),
+                      child: Icon(
+                        isSelected ? item.selectedIcon : item.icon,
+                        size: 26,
+                        color: isSelected ? context.error : context.outline,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
