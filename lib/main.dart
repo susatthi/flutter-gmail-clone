@@ -114,11 +114,22 @@ class MailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: SearchMailAnchor(),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: 1 + 20,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return const InboxTitle();
+              }
+              return const MailTile();
+            },
+          ),
         ),
       ],
     );
@@ -161,6 +172,90 @@ class SearchMailAnchor extends StatelessWidget {
       suggestionsBuilder: (context, controller) {
         return [];
       },
+    );
+  }
+}
+
+class InboxTitle extends StatelessWidget {
+  const InboxTitle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 24, 8),
+      child: Text(
+        '受信トレイ',
+        style: context.labelMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: context.outline,
+        ),
+      ),
+    );
+  }
+}
+
+class MailTile extends StatelessWidget {
+  const MailTile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () {},
+      titleAlignment: ListTileTitleAlignment.top,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      leading: const CircleAvatar(
+        backgroundColor: Colors.red,
+        child: Text(
+          'Y',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      title: Row(
+        children: [
+          const Expanded(
+            child: Text(
+              'エクスプレス予約・スマートEX',
+              maxLines: 1,
+            ),
+          ),
+          Text(
+            '8月23日',
+            style: context.bodySmall,
+          ),
+        ],
+      ),
+      subtitleTextStyle: context.bodySmall?.copyWith(
+        color: context.onSurfaceVariant,
+      ),
+      subtitle: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '日帰り旅行におすすめ！静岡6,000円バスツアーなど',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  'まもなく終了！夏の大セールキャンペーン開催中！',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: () {},
+            child: Icon(
+              Icons.star_border,
+              color: context.outlineVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
