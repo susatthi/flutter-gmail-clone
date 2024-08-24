@@ -24,7 +24,7 @@ class App extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorSchemeSeed: Colors.blue,
+        colorSchemeSeed: Colors.red,
       ),
       home: const NavigationPage(),
     );
@@ -140,7 +140,7 @@ class ComposeEmailButton extends StatelessWidget {
       onPressed: () {},
       icon: Icon(
         Icons.edit_outlined,
-        color: context.error,
+        color: context.primary,
       ),
       label: SizedBox(
         width: 64,
@@ -148,7 +148,7 @@ class ComposeEmailButton extends StatelessWidget {
           '作成',
           style: context.labelLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: context.error,
+            color: context.primary,
           ),
         ),
       ),
@@ -418,7 +418,7 @@ class BottomNavigationBar extends ConsumerWidget {
                       child: Icon(
                         isSelected ? item.selectedIcon : item.icon,
                         size: 26,
-                        color: isSelected ? context.error : context.outline,
+                        color: isSelected ? context.primary : context.outline,
                       ),
                     ),
                   );
