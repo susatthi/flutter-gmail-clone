@@ -90,18 +90,21 @@ class BottomNavigationBar extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ...NavigationItem.values.map(
-            (item) => Expanded(
-              child: InkWell(
-                onTap: () => ref
-                    .read(navigationItemNotifierProvider.notifier)
-                    .select(item),
-                child: Icon(
-                  item == currentItem ? item.selectedIcon : item.icon,
-                  size: 28,
-                  color: context.error,
+            (item) {
+              final isSelected = item == currentItem;
+              return Expanded(
+                child: InkWell(
+                  onTap: () => ref
+                      .read(navigationItemNotifierProvider.notifier)
+                      .select(item),
+                  child: Icon(
+                    isSelected ? item.selectedIcon : item.icon,
+                    size: 26,
+                    color: isSelected ? context.error : context.outline,
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ],
       ),
@@ -187,7 +190,7 @@ class InboxTitle extends StatelessWidget {
         '受信トレイ',
         style: context.labelMedium?.copyWith(
           fontWeight: FontWeight.bold,
-          color: context.outline,
+          color: context.onSurfaceVariant,
         ),
       ),
     );
