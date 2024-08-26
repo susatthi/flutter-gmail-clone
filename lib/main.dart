@@ -39,7 +39,9 @@ class NavigationPage extends ConsumerWidget {
     final currentItem = ref.watch(navigationItemNotifierProvider);
     return IndexedStack(
       index: NavigationItem.values.indexOf(currentItem),
-      children: NavigationItem.values.map((item) => item.body).toList(),
+      children: [
+        ...NavigationItem.values.map((item) => item.page),
+      ],
     );
   }
 }
@@ -374,7 +376,7 @@ enum NavigationItem {
         meetList => Icons.videocam,
       };
 
-  Widget get body => switch (this) {
+  Widget get page => switch (this) {
         emailList => const EmailListPage(),
         meetList => const MeetListPage(),
       };
