@@ -109,14 +109,20 @@ class _EmailListPageState extends ConsumerState<EmailListPage> {
         body: MediaQuery.removePadding(
           context: context,
           removeTop: true,
-          child: ListView.builder(
-            itemCount: 1 + 200,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return const InboxTitle();
-              }
-              return const EmailTile();
-            },
+          child: CustomScrollView(
+            slivers: [
+              const SliverToBoxAdapter(
+                child: InboxTitle(),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return const EmailTile();
+                  },
+                  childCount: 200,
+                ),
+              ),
+            ],
           ),
         ),
       ),
