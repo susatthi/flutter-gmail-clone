@@ -95,7 +95,7 @@ class _EmailListPageState extends ConsumerState<EmailListPage> {
       backgroundColor: context.surfaceContainerLowest,
       body: NestedScrollView(
         controller: _scrollController,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
               title: const SearchEmailAnchor(),
@@ -189,17 +189,15 @@ class _SearchEmailAnchorState extends State<SearchEmailAnchor> {
 
   @override
   Widget build(BuildContext context) {
-    // 展開前のSearchBarのカーソル点滅を止める
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_searchController.isOpen) {
-        FocusScope.of(context).requestFocus(FocusNode());
-      }
-    });
     return SearchAnchor(
       searchController: _searchController,
       viewBackgroundColor: context.surfaceContainerLowest,
       viewHintText: 'メールを検索',
       builder: (context, controller) {
+        // 展開前のSearchBarのカーソル点滅を止める
+        if (!_searchController.isOpen) {
+          FocusScope.of(context).requestFocus(FocusNode());
+        }
         return SizedBox(
           height: 48,
           child: SearchBar(
